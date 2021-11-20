@@ -6,14 +6,30 @@
 #define SAVEME_FRACTION_H
 
 #include <iostream>
-
+using namespace std;
 
 class Fraction {
 private:
     int numerator, denominator;
     double real;
+
+    class MyException: public std::exception {
+    private:
+        std::string m_error;
+
+
+    public:
+        MyException(std::string error) : m_error(error) {}
+
+        const char *what() const noexcept {
+            return m_error.c_str();
+        }
+
+
+    };
+
 public:
-    void standard_wiew();
+    void standard_view();
     double real_form();
     Fraction(int num=1, int denom=1);
 

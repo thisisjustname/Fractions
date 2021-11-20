@@ -18,7 +18,6 @@ int is_number(std::string &str){
     return num;
 }
 
-
 int lcm (int a, int b)  {
     if(std::min(a, b) == 1)
         return std::max(a, b);
@@ -26,7 +25,7 @@ int lcm (int a, int b)  {
     return b == 0 ? a : lcm (b, a % b);
 }
 
-void Fraction::standard_wiew() {
+void Fraction::standard_view() {
     for (int i = 2; i <= std::min(numerator, denominator); ++i)
         if(numerator % i == 0 && denominator % i == 0){
             numerator /= i;
@@ -37,7 +36,8 @@ void Fraction::standard_wiew() {
 Fraction::Fraction(int num, int denom) {
     try{
         if (denom == 0)
-            throw "Denominator can't be equal to zero";
+            //throw "Denominator can't be equal to zero";
+            throw MyException("Denominator can't be equal to zero");
         else if (numerator == 0){
             numerator = 0;
             denominator = 0;
@@ -46,12 +46,12 @@ Fraction::Fraction(int num, int denom) {
             denominator = denom;
 
             real = (double) numerator / denominator;
-            standard_wiew();
+            standard_view();
         }
     }
-    catch (const char* exception) // обработчик исключений типа const char*
+    catch (MyException& exception)
     {
-        std::cerr << "Error: " << exception << '\n';
+        std::cerr << "Error: " << exception.what() << '\n';
         exit(EXIT_FAILURE);
     }
 }
@@ -115,14 +115,14 @@ Fraction &Fraction::operator*=(Fraction fr) {
 Fraction Fraction::operator/(Fraction fr) {
     try{
         if (fr.numerator == 0)
-            throw "Division by zero";
+            throw MyException("Division by zero");
         else
             return this->operator*(fr.operator!());
     }
 
-    catch (const char* exception) // обработчик исключений типа const char*
+    catch (MyException& exception) // обработчик исключений типа const char*
     {
-        std::cerr << "Error: " << exception << '\n';
+        std::cerr << "Error: " << exception.what() << '\n';
         exit(EXIT_FAILURE);
     }
 }
@@ -130,14 +130,14 @@ Fraction Fraction::operator/(Fraction fr) {
 Fraction &Fraction::operator/=(Fraction fr) {
     try{
         if (fr.numerator == 0)
-            throw "Division by zero";
+            throw MyException("Division by zero");
         else
             return this->operator*=(fr.operator!());
     }
 
-    catch (const char* exception) // обработчик исключений типа const char*
+    catch (MyException& exception) // обработчик исключений типа const char*
     {
-        std::cerr << "Error: " << exception << '\n';
+        std::cerr << "Error: " << exception.what() << '\n';
         exit(EXIT_FAILURE);
     }
 }
@@ -182,25 +182,25 @@ bool Fraction::operator<=(Fraction fr) {
 
 void Fraction::operator++() {
     numerator += denominator;
-    standard_wiew();
+    standard_view();
 }
 
 void Fraction::operator--() {
     numerator -= denominator;
-    standard_wiew();
+    standard_view();
 }
 
 Fraction Fraction::operator!() {
     try {
         if (numerator == 0)
-            throw "Impossible operation";
+            throw MyException("Division by zero");
 
         return {denominator, numerator};
     }
 
-    catch (const char* exception) // обработчик исключений типа const char*
+    catch (MyException& exception)
     {
-        std::cerr << "Error: " << exception << '\n';
+        std::cerr << "Error: " << exception.what() << '\n';
     }
     return {numerator, denominator};
 }
@@ -220,15 +220,16 @@ std::istream &operator>>(std::istream &in, Fraction &fr) {
     int index = str.find("/"), num, denom;
     try{
         if (index == -1){
-            if(!is_number(str))
-                throw "invalid_argument";
+            if(is_number(str) == -1)
+                throw Fraction::MyException("Invalid_argument");
             else
                 num = is_number(str);
             denom = 1;
         } else{
-            std::string temp1 = str.substr(0, index), temp2 = str.substr(index + 1,
-                                                                         str.length() - index - 1);
-            if (!is_number(temp1) || !is_number(temp2))
+            std::string temp1 = str.substr(0, index),
+                        temp2 = str.substr(index + 1,str.length() - index - 1);
+
+            if (is_number(temp1) == -1 || is_number(temp2) == -1)
                 throw "invalid_argument";
             else {
                 num = stoi(str.substr(0, index));
@@ -237,9 +238,9 @@ std::istream &operator>>(std::istream &in, Fraction &fr) {
         }
     }
 
-    catch (const char* exception) // обработчик исключений типа const char*
+    catch (Fraction::MyException& exception)
     {
-        std::cerr << "Error: " << exception << '\n';
+        std::cerr << "Error: " << exception.what() << '\n';
         exit(EXIT_FAILURE);
     }
 
