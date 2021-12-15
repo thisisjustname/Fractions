@@ -45,25 +45,24 @@ int Fraction::get_ID() {
     return ID;
 }
 
-Fraction::Fraction(int num, int denom) {
+Fraction::Fraction(const int& num, const int& denom) {
     try {
         if (denom == 0)
-            //throw "Denominator can't be equal to zero";
             throw MyException("Denominator can't be equal to zero");
-        if (num == 0) {
-            num = 0;
-            denom = 0;
-        }
-        if (denom < 0) {
-            num *= -1;
-            denom *= -1;
-        }
+
         numerator = num;
         denominator = denom;
 
-        real = (double)numerator / denominator;
-        standard_view();
+        if (numerator == 0)
+            denominator = 0;
 
+        if (denominator < 0) {
+            numerator *= -1;
+            denominator *= -1;
+        }
+
+        real = static_cast<double>(numerator) / denominator;
+        standard_view();
     }
     catch (MyException& exception)
     {
@@ -77,12 +76,14 @@ Fraction::Fraction(int num, int denom) {
     }
 }
 
-Fraction Fraction::operator-() {
+Fraction& Fraction::operator-() {
     numerator *= -1;
     return *this;
 }
 
 Fraction& Fraction::operator=(const Fraction& fr) {
+    if(&fr == this)
+        return *this;
     numerator = fr.numerator;
     denominator = fr.denominator;
 
@@ -391,4 +392,12 @@ void Fraction::set_num(const int &num) {
 
 void Fraction::set_denom(const int &num) {
     denominator = num;
+}
+
+Fraction::Fraction(const Fraction& fr) {
+    if(&fr != this){
+        numerator = fr.numerator;
+        denominator = fr.denominator;
+        real = fr.real;
+    }
 }

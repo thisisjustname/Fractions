@@ -30,7 +30,8 @@ public:
     double get_real_form() const;
     int get_ID();
     Fraction();
-    Fraction(int num, int denom);
+    Fraction(const int&, const int&);
+    Fraction(const Fraction&);
 
     int get_num() const;
     int get_denom() const;
@@ -60,7 +61,7 @@ public:
     Fraction& operator/=(const int&);
 
     Fraction& operator=(const Fraction&);
-    Fraction operator-();
+    Fraction& operator-();
     bool operator==(const Fraction&);
     bool operator != (const Fraction&);
     bool operator > (const Fraction&);
